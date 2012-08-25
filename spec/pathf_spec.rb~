@@ -1,0 +1,14 @@
+
+ENV["PATH"] = File.dirname(__FILE__) + "/../bin:" + ENV["PATH"]
+p ENV["PATH"]
+
+describe "the 'pathf' command" do
+
+  example "[b]asename"do
+    `pathf b /home/pasberth`.should == "pasberth\n"
+  end
+
+  example "[c]ar" do
+    `pathf c /home/pasberth`.should == "/\n"
+  end
+end

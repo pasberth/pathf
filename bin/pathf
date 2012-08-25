@@ -1,0 +1,122 @@
+# -*- sh -*-
+
+if [ $# -eq 1 ]; then
+  SCRIPT=$1; shift
+  BASEPATH=$PWD
+elif [ $# -eq 2 ]; then
+  SCRIPT=$1; shift
+  BASEPATH=`realpath "$1"`; shift
+else
+  echo "usage: $0 -[OPTIONS] SCRIPT [BASEPATH]" 1>&2
+  exit 1
+fi
+
+A=$BASEPATH
+RESULT=($A)
+
+next_path () {
+  local NEXT_PATH
+
+  if read NEXT_PATH; then
+    eval echo $NEXT_PATH
+  else
+    echo "$0:  One or more argument PATH was required but not given." 1>&2
+    exit 1
+  fi
+}
+
+while [ -n "$SCRIPT" ]; do
+  case $SCRIPT in
+    t*)
+      SCRIPT=${SCRIPT##t}
+      A=${A/$HOME/\~}
+      RESULT=($A)
+      continue;;
+    b*)
+      SCRIPT=${SCRIPT##b}
+      A=`basename "$A"`
+      RESULT=($A)
+      continue;;
+    B*)
+      SCRIPT=${SCRIPT##B}
+      if [ "$A" = "/" ]; then
+        A="."
+      else
+        A=`dirname "$A"`
+      fi
+      RESULT=($A)
+      continue;;
+    c*)
+      SCRIPT=${SCRIPT##c}
+      if [ "$A" = "~" ]; then
+        A=\~
+        RESULT=($A)
+        continue
+      fi
+
+      A=${A%%${A#*/}}
+      if [ "$A" = "/" ]; then
+        A="/"
+      else
+	A=${A%%/}
+      fi
+      RESULT=($A)
+      continue;;
+    C*)
+      SCRIPT=${SCRIPT##C}
+      TMP=$A
+      A=${A#*/}
+      if #[ "$A" = "/" ] ||
+         #[ "$A" = "${A#*/}" ] ||
+         [ -z "$A" ] || \
+         [ "$TMP" = "$A" ]; then
+        A="."
+      else
+        A=$A #${A#*/}
+      fi
+      RESULT=($A)
+      continue;;
+    d*)
+      SCRIPT=${SCRIPT##d}
+      DEL_PATH=`next_path`
+
+      if [ -z "$DEL_PATH" ]; then
+        A=$A
+      # If $DEL_PATH is subdirectory of $A,
+      # Dones print nothing. For example:
+      # DEL_PATH = /usr/local
+      # A        = /usr
+      elif [ "$DEL_PATH" != "${DEL_PATH##$A}" ]; then
+	A=""
+      # If $A isn't parent directory of $DEL_PATH,
+      # Dones print nothing. For example:
+      # DEL_PATH = /usr
+      # A        = /etc
+      elif [ "$A" = "${A##$DEL_PATH}" ]; then
+	A=""
+      elif [ -z "$DEL_PATH" ]; then
+        A=$A
+      else
+        A=${A##${DEL_PATH%/}/}
+      fi
+      RESULT=($A)
+      continue;;
+    D*) 
+      SCRIPT=${SCRIPT##D}
+      DEL_PATH=`next_path`
+      if [ "$A" = "${A##$DEL_PATH}" ]; then
+	A=""
+      else
+        A=$DEL_PATH
+      fi
+      RESULT=($A)
+      continue;;
+    *)
+      echo "invalid expression: $SCRIPT" 1>&2
+      exit 1
+  esac
+done
+
+for r in "${RESULT[@]}"; do
+  echo "$r"
+done
