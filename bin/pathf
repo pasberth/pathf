@@ -5,7 +5,7 @@ if [ $# -eq 1 ]; then
   BASEPATH=$PWD
 elif [ $# -eq 2 ]; then
   SCRIPT=$1; shift
-  BASEPATH=`realpath "$1"`; shift
+  BASEPATH=`realpath --no-symlinks "$1"`; shift
 else
   echo "usage: $0 -[OPTIONS] SCRIPT [BASEPATH]" 1>&2
   exit 1
