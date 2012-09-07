@@ -5,7 +5,11 @@ if [ $# -eq 1 ]; then
   BASEPATH=$PWD
 elif [ $# -eq 2 ]; then
   SCRIPT=$1; shift
-  BASEPATH=`realpath --no-symlinks "$1"`; shift
+  if [[ -z "$1" ]]; then
+    echo ""
+    exit 0
+  fi
+  BASEPATH=`realpath --canonicalize-missing --no-symlinks "$1"`; shift
 else
   echo "usage: $0 -[OPTIONS] SCRIPT [BASEPATH]" 1>&2
   exit 1
