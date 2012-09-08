@@ -15,14 +15,14 @@ else
   exit 1
 fi
 
-A=$BASEPATH
-RESULT=($A)
+A="$BASEPATH"
+RESULT=("$A")
 
 next_path () {
   local NEXT_PATH
 
   if read NEXT_PATH; then
-    eval echo $NEXT_PATH
+    eval echo "$NEXT_PATH"
   else
     echo "$0:  One or more argument PATH was required but not given." 1>&2
     exit 1
@@ -34,12 +34,12 @@ while [ -n "$SCRIPT" ]; do
     t*)
       SCRIPT=${SCRIPT##t}
       A=${A/$HOME/\~}
-      RESULT=($A)
+      RESULT=("$A")
       continue;;
     b*)
       SCRIPT=${SCRIPT##b}
       A=`basename "$A"`
-      RESULT=($A)
+      RESULT=("$A")
       continue;;
     B*)
       SCRIPT=${SCRIPT##B}
@@ -48,13 +48,13 @@ while [ -n "$SCRIPT" ]; do
       else
         A=`dirname "$A"`
       fi
-      RESULT=($A)
+      RESULT=("$A")
       continue;;
     c*)
       SCRIPT=${SCRIPT##c}
       if [ "$A" = "~" ]; then
         A=\~
-        RESULT=($A)
+        RESULT=("$A")
         continue
       fi
 
@@ -64,7 +64,7 @@ while [ -n "$SCRIPT" ]; do
       else
 	A=${A%%/}
       fi
-      RESULT=($A)
+      RESULT=("$A")
       continue;;
     C*)
       SCRIPT=${SCRIPT##C}
@@ -76,7 +76,7 @@ while [ -n "$SCRIPT" ]; do
          [ "$TMP" = "$A" ]; then
         A="."
       else
-        A=$A #${A#*/}
+        A="$A" #${A#*/}
       fi
       RESULT=($A)
       continue;;
@@ -85,7 +85,7 @@ while [ -n "$SCRIPT" ]; do
       DEL_PATH=`next_path`
 
       if [ -z "$DEL_PATH" ]; then
-        A=$A
+        A="$A"
       # If $DEL_PATH is subdirectory of $A,
       # Dones print nothing. For example:
       # DEL_PATH = /usr/local
@@ -99,11 +99,11 @@ while [ -n "$SCRIPT" ]; do
       elif [ "$A" = "${A##$DEL_PATH}" ]; then
 	A=""
       elif [ -z "$DEL_PATH" ]; then
-        A=$A
+        A="$A"
       else
         A=${A##${DEL_PATH%/}/}
       fi
-      RESULT=($A)
+      RESULT=("$A")
       continue;;
     D*) 
       SCRIPT=${SCRIPT##D}
@@ -113,7 +113,7 @@ while [ -n "$SCRIPT" ]; do
       else
         A=$DEL_PATH
       fi
-      RESULT=($A)
+      RESULT=("$A")
       continue;;
     *)
       echo "invalid expression: $SCRIPT" 1>&2
