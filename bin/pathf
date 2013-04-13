@@ -1,5 +1,7 @@
 # -*- sh -*-
 
+which realpath > /dev/null 2>&1 || alias realpath=grealpath
+
 if [ $# -eq 1 ]; then
   SCRIPT=$1; shift
   BASEPATH=$PWD
