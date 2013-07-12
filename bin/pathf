@@ -98,7 +98,7 @@ while [ -n "$SCRIPT" ]; do
       # Dones print nothing. For example:
       # DEL_PATH = /usr
       # A        = /etc
-      elif [ "$A" = "${A##$DEL_PATH}" ]; then
+      elif [ "$A" = "${A##${DEL_PATH%/}/}" ]; then
 	A=""
       elif [ -z "$DEL_PATH" ]; then
         A="$A"
@@ -110,7 +110,7 @@ while [ -n "$SCRIPT" ]; do
     D*) 
       SCRIPT=${SCRIPT##D}
       DEL_PATH=`next_path`
-      if [ "$A" = "${A##$DEL_PATH}" ]; then
+      if [ "$A" = "${A##${DEL_PATH%/}/}" ]; then
 	A=""
       else
         A=$DEL_PATH
