@@ -3,8 +3,8 @@
 # UGLY HACKS
 function _realpath () {
   python << EOF
-from os.path import realpath
-print realpath("$1")
+from os.path import normpath
+print normpath("$1")
 EOF
 }
 
@@ -18,6 +18,7 @@ else
   echo "[$0] ERROR: realpath/grealpath/python command not found." 1>&2
   exit 1
 fi
+
 
 if [ $# -eq 1 ]; then
   SCRIPT=$1; shift
